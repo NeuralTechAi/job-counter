@@ -12,4 +12,4 @@ Use **Save / Import** to copy a job's JSON as a backup or import it on another d
 
 ## Hosting
 
-`index.html` is based on the supplied `Job Counter3.html`, renamed for GitHub Pages and updated for mobile use. Phones retain the table layout: up to two count columns plus Total fit without horizontal scrolling, using compact stacked count controls. Wider jobs scroll horizontally. It is a self-contained static app with no backend or external dependencies. GitHub Pages serves the root of the `main` branch.
+`index.html` is based on the supplied `Job Counter3.html`, renamed for GitHub Pages and updated for mobile use. Phones retain the table layout: one count column plus Total fits without horizontal scrolling, using compact stacked count controls. Wider jobs scroll horizontally. It is a self-contained static app with no backend or external dependencies. GitHub Pages serves the root of the `main` branch.
