@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Job Counter</title>
 <meta name="theme-color" content="#0f766e">
 <style>
@@ -75,28 +75,35 @@ main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env
 #th{width:40px;padding:0;font-size:1.1rem;flex:none}
 @media(pointer:coarse){.b{min-height:44px}#th{width:44px}.x,.wb{padding:8px}.gr{padding:8px 6px}.cr{height:80px}.cr .add{width:36px;height:36px}}
 html{-webkit-text-size-adjust:100%}
+/* Keep the same table on phones; wide jobs scroll inside the table. */
+.wrap{max-width:100%;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.wrap:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.mobile-note{display:none}
 @media screen and (max-width:640px){
-.wrap{background:none;border:0;overflow:visible}
-table,thead,tbody,tfoot,tr{display:block}
-thead tr{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px}
-thead tr::before{content:"Columns";width:100%;color:var(--mute);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
-table thead th{display:inline-flex;align-items:center;border:0;padding:2px 4px 2px 8px;background:var(--tot);border-radius:18px;text-align:left}
-table thead th:last-child{display:none}
-table thead th:first-child{order:9;position:static;min-width:0;background:none;padding:0;margin-left:auto}
-.cr{flex-direction:row;height:auto;gap:6px}
-.cr .add,.cr #ar{width:auto;height:40px;padding:0 14px;border-radius:20px;align-self:auto;font-size:1rem}
-#ac::after{content:" Column"}#ar::after{content:" Row"}
-tbody tr,tfoot tr{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
-tfoot tr{background:var(--tot)}
-table tbody th:first-child,table tfoot th:first-child{display:flex;align-items:center;justify-content:space-between;position:static;min-width:0;text-align:left;border:0;border-bottom:1px solid var(--line);background:var(--tot);padding:10px 12px;font-size:1.05rem}
-tbody td,tfoot td{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:normal}
-td[data-l]::before{content:attr(data-l);flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600;color:var(--mute)}
-tbody td:last-child,tfoot td:last-child{border-bottom:0}
-td.t::before{color:var(--ink)}
-.c{display:inline-flex;gap:6px;min-width:0}
-.c input{width:58px;font-size:1.3rem}
-.c button{width:44px;height:44px;font-size:1.4rem}
-.tl{display:grid;grid-template-columns:1fr 1fr}.tl .b{width:100%}.tl #dat{grid-column:1/-1}}
+main{padding-top:10px}
+.bar:first-child{display:grid;grid-template-columns:minmax(0,1fr) auto auto}
+select.b{max-width:100%;width:100%}
+.b{min-height:44px}
+#th{width:44px}
+th,td{padding:8px 5px}
+th:first-child{min-width:80px;max-width:120px;white-space:normal;overflow-wrap:anywhere}
+th:first-child .lbl{max-width:110px}
+.c{gap:4px}
+.c button{width:44px;height:44px;font-size:1.3rem;flex-shrink:0}
+.c input{width:44px;min-height:44px;font-size:16px}
+.lbl{font-size:16px}
+.cr{height:96px}
+.cr .add{width:44px;height:44px}
+.m.h{flex-basis:100%}
+.m .lbl{font-size:16px}
+.x,.wb{min-width:36px;min-height:36px}
+.tl{display:grid;grid-template-columns:1fr 1fr}
+.tl .b{width:100%}
+.tl #dat{grid-column:1/-1}
+.mobile-note{display:block}
+#dlg .bar{display:grid;grid-template-columns:1fr 1fr}
+#dlg .b{white-space:normal}
+}
 @media print{:root:root:root{--bg:#fff;--card:#fff;--ink:#000;--tot:#eee;--line:#bbb;--mute:#555}}
 @media print{.bar,.add,.x,.note,.pn{display:none!important}body{background:#fff;color:#000}.wrap{border:0;overflow:visible}.c button{display:none}.c input{border:0}h1{font-size:1.4rem}.pj{display:block!important}}
 .pj{display:none;font-size:1.2rem;font-weight:700;margin:4px 2px}
@@ -112,7 +119,8 @@ td.t::before{color:var(--ink)}
 </div>
 <input id="nm" aria-label="Job title" placeholder="Job title">
 <div id="meta"></div>
-<div class="wrap"><table id="tb"></table></div>
+<div class="wrap" role="region" aria-label="Job counts table; scroll horizontally to see all columns" tabindex="0"><table id="tb"></table></div>
+<p class="note mobile-note">Swipe the table sideways to see more columns.</p>
 <div class="bar tl">
  <button class="b" id="ed">Edit</button>
  <button class="b" id="clr">Clear counts</button>
