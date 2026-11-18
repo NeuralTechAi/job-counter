@@ -85,7 +85,8 @@ main{padding-top:10px}
 select.b{max-width:100%;width:100%}
 .b{min-height:44px}
 #th{width:44px}
-table{table-layout:fixed;width:max(100%,calc(108px + (100% - 108px)*var(--data-columns,1)))}
+/* Reserve 108px for row labels and Total, then fit two count columns. */
+table{table-layout:fixed;width:max(100%,calc(108px + (100% - 108px) / 2 * var(--data-columns,1)))}
 th,td{padding:8px 4px;white-space:normal;overflow-wrap:anywhere}
 th:first-child{width:64px;min-width:64px;max-width:64px}
 th:last-child{width:44px}
@@ -107,6 +108,13 @@ th:first-child .lbl{max-width:54px}
 #dlg .bar{display:grid;grid-template-columns:1fr 1fr}
 #dlg .b{white-space:normal}
 }
+@media screen and (max-width:440px){
+/* Keep the inline controls when there is just one count column. */
+.multiple-count-columns tbody td[data-cid]{padding-inline:2px}
+.multiple-count-columns .c{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 0;width:100%;max-width:104px;margin-inline:auto}
+.multiple-count-columns .c input{grid-column:1/-1;grid-row:1;width:100%;min-height:36px}
+.multiple-count-columns .c button{width:100%}
+}
 @media print{:root:root:root{--bg:#fff;--card:#fff;--ink:#000;--tot:#eee;--line:#bbb;--mute:#555}}
 @media print{.bar,.add,.x,.note,.pn{display:none!important}body{background:#fff;color:#000}.wrap{border:0;overflow:visible}.c button{display:none}.c input{border:0}h1{font-size:1.4rem}.pj{display:block!important}}
 .pj{display:none;font-size:1.2rem;font-weight:700;margin:4px 2px}
@@ -123,7 +131,7 @@ th:first-child .lbl{max-width:54px}
 <input id="nm" aria-label="Job title" placeholder="Job title">
 <div id="meta"></div>
 <div class="wrap" role="region" aria-label="Job counts table; scroll horizontally to see all columns" tabindex="0"><table id="tb"></table></div>
-<p class="note mobile-note">One count column and Total fit on screen. Swipe sideways for more columns.</p>
+<p class="note mobile-note">Two count columns and Total fit on screen. Swipe sideways for more columns.</p>
 <div class="bar tl">
  <button class="b" id="ed">Edit</button>
  <button class="b" id="clr">Clear counts</button>
@@ -169,6 +177,7 @@ function render(){
  h+='</tbody>'
   +`<tfoot><tr><th>Total</th>${ct.map((t,i)=>`<td class="t" data-l="${esc(j.cols[i].n)}" data-cid="${j.cols[i].id}">${t}</td>`).join('')}<td class="t" data-l="Grand total">${ct.reduce((a,b)=>a+b,0)}</td></tr></tfoot>`;
  $('#tb').style.setProperty('--data-columns',j.cols.length);
+ $('#tb').classList.toggle('multiple-count-columns',j.cols.length>1);
  $('#tb').innerHTML=h;
 }
 function focusLast(sel){const e=[...document.querySelectorAll(sel)].pop();if(e){e.focus();const r=document.createRange();r.selectNodeContents(e);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
