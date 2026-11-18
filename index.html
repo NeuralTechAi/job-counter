@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Counter</title>
+<meta name="theme-color" content="#0f766e">
+<style>
+:root{--on:#fff;--bg:#f4f6f8;--card:#fff;--ink:#16202a;--mute:#66758a;--line:#dde3ea;--acc:#0f766e;--accbg:#e2f3f1;--bad:#c2410c;--tot:#eef2f6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--on:#042f2b;--bg:#0e141b;--card:#161e28;--ink:#e6ecf2;--mute:#8b9bb0;--line:#26323f;--acc:#2dd4bf;--accbg:#12332f;--bad:#fb923c;--tot:#1b2531}}
+:root[data-theme="dark"]{--on:#042f2b;--bg:#0e141b;--card:#161e28;--ink:#e6ecf2;--mute:#8b9bb0;--line:#26323f;--acc:#2dd4bf;--accbg:#12332f;--bad:#fb923c;--tot:#1b2531}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+main{max-width:1000px;margin:0 auto;padding:12px}
+h1{font-size:1.1rem;margin:4px 2px 10px;letter-spacing:-.01em}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+button,select,input{font:inherit;color:inherit}
+.b{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;min-height:36px}
+.b:hover{border-color:var(--acc)}.b.p{background:var(--acc);border-color:var(--acc);color:var(--on);font-weight:600}
+.b.on{background:var(--accbg);border-color:var(--acc)}.b.arm{background:var(--bad);border-color:var(--bad);color:#fff}
+
+select.b{flex:1;min-width:0;max-width:60vw}
+#nm{width:100%;background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 8px;margin:2px 0 6px;font-size:1.5rem;font-weight:700;letter-spacing:-.01em}
+#nm:hover,#nm:focus{border-color:var(--line);background:var(--card);outline:none}
+.wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:separate;border-spacing:0;width:100%}
+th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child{position:sticky;left:0;background:var(--card);text-align:left;z-index:1;min-width:84px;border-right:1px solid var(--line)}
+thead th{font-weight:600}
+.lbl{display:inline-block;min-width:44px;padding:3px 6px;border-radius:6px;outline:none}
+.lbl:focus{background:var(--accbg);box-shadow:0 0 0 2px var(--acc)}
+.c{display:inline-flex;align-items:center;gap:4px}
+.c button{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--tot);cursor:pointer;font-size:1.1rem;line-height:1;padding:0}
+.c button:active{background:var(--acc);color:var(--on)}
+.c input{width:46px;text-align:center;border:1px solid transparent;background:transparent;border-radius:6px;font-weight:600;font-size:1.05rem;padding:4px 0;-moz-appearance:textfield}
+.c input:focus{border-color:var(--acc);outline:none}
+.c input::-webkit-inner-spin-button{display:none}
+.t{background:var(--tot);font-weight:700;font-variant-numeric:tabular-nums}
+tfoot td,tfoot th{border-bottom:0}
+tfoot th{background:var(--tot)}
+.add{width:36px;height:36px;border-radius:50%;border:1.5px dashed var(--acc);background:none;color:var(--acc);font-size:1.2rem;cursor:pointer;padding:0}
+.add:hover{background:var(--accbg)}
+.x{border:0;background:none;color:var(--bad);cursor:pointer;font-size:.8rem;padding:2px 4px;border-radius:4px}
+.x.arm{background:var(--bad);color:#fff}
+body:not(.ed) .x:not(.mx){display:none}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:min(560px,92vw);padding:14px}
+dialog::backdrop{background:#0008}
+textarea{width:100%;height:200px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px;font:12px/1.4 ui-monospace,Menlo,monospace}
+.note{color:var(--mute);font-size:.8rem;margin:8px 2px}
+.cr{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;height:70px}
+.cr .add{width:32px;height:32px}
+.cr #ar{align-self:flex-start}
+.mf{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.m{display:flex;align-items:center;gap:4px;flex:1 1 100%;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 6px}
+.m.h{flex:0 0 calc(50% - 3px)}
+.m.dg{opacity:.55;border-color:var(--acc)}
+.gr{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;color:var(--mute);padding:4px 2px;line-height:1}
+.wb{border:0;background:none;color:var(--mute);cursor:pointer;padding:2px 4px;border-radius:4px}
+.wb:hover{background:var(--accbg)}
+.lbl:empty::before{content:attr(data-ph);opacity:.55}
+@media print{.gr,.wb{display:none}.lbl:empty::before{content:none}.m input::placeholder{color:transparent}}
+.m .lbl{color:var(--mute);min-width:3ch;max-width:40%;font-size:.85rem}
+.m input{flex:1;min-width:0;border:0;background:transparent;font-weight:600;padding:4px;outline:none}
+#am{margin-bottom:10px}
+.tl{margin:10px 0 0}
+:root{color-scheme:light dark}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+button,.c input{touch-action:manipulation}
+.b,.c button,.wb,.add{-webkit-user-select:none;user-select:none}
+main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+.m input,select.b{font-size:16px}
+#th{width:40px;padding:0;font-size:1.1rem;flex:none}
+@media(pointer:coarse){.b{min-height:44px}#th{width:44px}.x,.wb{padding:8px}.gr{padding:8px 6px}.cr{height:80px}.cr .add{width:36px;height:36px}}
+html{-webkit-text-size-adjust:100%}
+@media screen and (max-width:640px){
+.wrap{background:none;border:0;overflow:visible}
+table,thead,tbody,tfoot,tr{display:block}
+thead tr{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px}
+thead tr::before{content:"Columns";width:100%;color:var(--mute);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+table thead th{display:inline-flex;align-items:center;border:0;padding:2px 4px 2px 8px;background:var(--tot);border-radius:18px;text-align:left}
+table thead th:last-child{display:none}
+table thead th:first-child{order:9;position:static;min-width:0;background:none;padding:0;margin-left:auto}
+.cr{flex-direction:row;height:auto;gap:6px}
+.cr .add,.cr #ar{width:auto;height:40px;padding:0 14px;border-radius:20px;align-self:auto;font-size:1rem}
+#ac::after{content:" Column"}#ar::after{content:" Row"}
+tbody tr,tfoot tr{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+tfoot tr{background:var(--tot)}
+table tbody th:first-child,table tfoot th:first-child{display:flex;align-items:center;justify-content:space-between;position:static;min-width:0;text-align:left;border:0;border-bottom:1px solid var(--line);background:var(--tot);padding:10px 12px;font-size:1.05rem}
+tbody td,tfoot td{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:normal}
+td[data-l]::before{content:attr(data-l);flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600;color:var(--mute)}
+tbody td:last-child,tfoot td:last-child{border-bottom:0}
+td.t::before{color:var(--ink)}
+.c{display:inline-flex;gap:6px;min-width:0}
+.c input{width:58px;font-size:1.3rem}
+.c button{width:44px;height:44px;font-size:1.4rem}
+.tl{display:grid;grid-template-columns:1fr 1fr}.tl .b{width:100%}.tl #dat{grid-column:1/-1}}
+@media print{:root:root:root{--bg:#fff;--card:#fff;--ink:#000;--tot:#eee;--line:#bbb;--mute:#555}}
+@media print{.bar,.add,.x,.note,.pn{display:none!important}body{background:#fff;color:#000}.wrap{border:0;overflow:visible}.c button{display:none}.c input{border:0}h1{font-size:1.4rem}.pj{display:block!important}}
+.pj{display:none;font-size:1.2rem;font-weight:700;margin:4px 2px}
+</style>
+<script>onerror=function(m,u,l){var d=document.createElement('div');d.style.cssText='padding:8px;background:#b91c1c;color:#fff;font:12px monospace';d.textContent='Error: '+m+' (line '+l+')';document.addEventListener('DOMContentLoaded',function(){document.body.insertBefore(d,document.body.firstChild)})}</script>
+</head>
+<body>
+<main>
+<div class="bar">
+ <select id="sel" class="b" aria-label="Job"></select>
+ <button class="b p" id="new">+ New job</button>
+ <button class="b" id="th" aria-label="Toggle dark mode"></button>
+</div>
+<input id="nm" aria-label="Job title" placeholder="Job title">
+<div id="meta"></div>
+<div class="wrap"><table id="tb"></table></div>
+<div class="bar tl">
+ <button class="b" id="ed">Edit</button>
+ <button class="b" id="clr">Clear counts</button>
+ <button class="b" id="del">Delete job</button>
+ <button class="b" id="prt">Print</button>
+ <button class="b" id="dat">Save / Import</button>
+</div>
+<p class="note">Changes save automatically on this device. Tap a label to rename it, or tap the number to type a value. Use Edit to remove rows and columns.</p>
+</main>
+<dialog id="dlg">
+ <textarea id="ta" spellcheck="false"></textarea>
+ <div class="bar" style="margin:10px 0 0">
+  <button class="b" id="cj">Show job JSON</button>
+  <button class="b" id="cc">Show CSV</button>
+  <button class="b" id="cp">Copy</button>
+  <button class="b p" id="im">Import pasted JSON</button>
+  <button class="b" id="cl">Close</button>
+ </div>
+ <p class="note" id="msg">Copy the JSON to back up a job. Paste it here and import to restore it.</p>
+</dialog>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9),K='jobcounter.v1';
+const mk=n=>({id:uid(),name:n,rows:[{id:uid(),n:'Row 1'}],cols:[{id:uid(),n:'Col 1'}],v:{}});
+let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!S||!S.jobs||!S.jobs.length){const j=mk('Job 1');S={jobs:[j],cur:j.id}}
+const J=()=>S.jobs.find(j=>j.id===S.cur)||S.jobs[0];
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const get=(j,r,c)=>+j.v[r+'_'+c]||0;
+function arm(b,fn){if(b._a){b._a=0;fn()}else{b._a=1;const t=b.textContent;b.classList.add('arm');b.textContent='Sure?';setTimeout(()=>{b._a=0;b.classList.remove('arm');b.textContent=t},2500)}}
+function render(){
+ const j=J();S.cur=j.id;
+ $('#sel').innerHTML=S.jobs.map(x=>`<option value="${x.id}"${x.id===j.id?' selected':''}>${esc(x.name)}</option>`).join('');
+ $('#nm').value=j.name;renderMeta();
+ const ct=j.cols.map(c=>j.rows.reduce((a,r)=>a+get(j,r.id,c.id),0));
+ let h='<thead><tr><th><div class="cr pn"><button class="add" id="ac" title="Add column" aria-label="Add column">+</button><button class="add" id="ar" title="Add row" aria-label="Add row">+</button></div></th>'+j.cols.map(c=>`<th><span class="lbl" contenteditable="true" data-c="${c.id}">${esc(c.n)}</span><button class="x" data-xc="${c.id}" title="Remove column">✕</button></th>`).join('')
+  +'<th>Total</th></tr></thead><tbody>';
+ for(const r of j.rows){
+  let rt=0;h+=`<tr><th><span class="lbl" contenteditable="true" data-r="${r.id}">${esc(r.n)}</span><button class="x" data-xr="${r.id}" title="Remove row">✕</button></th>`;
+  for(const c of j.cols){const v=get(j,r.id,c.id);rt+=v;
+   h+=`<td data-l="${esc(c.n)}" data-cid="${c.id}"><span class="c"><button data-d="-1" data-k="${r.id}_${c.id}" aria-label="Decrease">−</button><input type="number" inputmode="numeric" min="0" value="${v}" data-k="${r.id}_${c.id}"><button data-d="1" data-k="${r.id}_${c.id}" aria-label="Increase">+</button></span></td>`}
+  h+=`<td class="t" data-l="Total">${rt}</td></tr>`}
+ h+='</tbody>'
+  +`<tfoot><tr><th>Total</th>${ct.map((t,i)=>`<td class="t" data-l="${esc(j.cols[i].n)}" data-cid="${j.cols[i].id}">${t}</td>`).join('')}<td class="t" data-l="Grand total">${ct.reduce((a,b)=>a+b,0)}</td></tr></tfoot>`;
+ $('#tb').innerHTML=h;
+}
+function focusLast(sel){const e=[...document.querySelectorAll(sel)].pop();if(e){e.focus();const r=document.createRange();r.selectNodeContents(e);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
+$('#tb').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;const j=J();
+ if(b.dataset.d){const k=b.dataset.k;navigator.vibrate&&navigator.vibrate(8);j.v[k]=Math.max(0,get(j,...k.split('_'))+ +b.dataset.d);save();render()}
+ else if(b.id==='ar'){j.rows.push({id:uid(),n:'Row '+(j.rows.length+1)});save();render();focusLast('[data-r]')}
+ else if(b.id==='ac'){j.cols.push({id:uid(),n:'Col '+(j.cols.length+1)});save();render();focusLast('[data-c]')}
+ else if(b.dataset.xr)arm(b,()=>{j.rows=j.rows.filter(r=>r.id!==b.dataset.xr);save();render()});
+ else if(b.dataset.xc)arm(b,()=>{j.cols=j.cols.filter(c=>c.id!==b.dataset.xc);save();render()});
+});
+$('#tb').addEventListener('change',e=>{const i=e.target;if(i.dataset.k){J().v[i.dataset.k]=Math.max(0,Math.floor(+i.value)||0);save();render()}});
+$('#tb').addEventListener('focusin',e=>{if(e.target.matches('.c input'))e.target.select()});
+$('#tb').addEventListener('focusout',e=>{const l=e.target,j=J();if(!l.classList.contains('lbl'))return;
+ const n=l.textContent.trim()||'Untitled',o=l.dataset.r?j.rows.find(r=>r.id===l.dataset.r):j.cols.find(c=>c.id===l.dataset.c);
+ if(o&&o.n!==n){o.n=n;save();if(l.dataset.c)document.querySelectorAll('[data-cid="'+l.dataset.c+'"]').forEach(x=>x.dataset.l=n)}l.textContent=n});
+$('#tb').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('lbl')){e.preventDefault();e.target.blur()}});
+function renderMeta(){const j=J();j.meta=j.meta||[];
+ $('#meta').innerHTML='<div class="mf">'+j.meta.map(m=>`<div class="m${m.h?' h':''}" data-id="${m.id}"><span class="gr" title="Drag to reorder">⠿</span><span class="lbl" contenteditable="true" data-mk="${m.id}" data-ph="Label">${esc(m.k)}</span><input value="${esc(m.v)}" data-mv="${m.id}" placeholder="Value"><button class="wb" data-wh="${m.id}" title="Toggle half / full width">⇔</button><button class="x mx" data-xm="${m.id}" title="Remove field">✕</button></div>`).join('')+'</div><button class="b pn" id="am">+ Add field</button>'}
+const M=$('#meta');
+M.addEventListener('click',e=>{const b=e.target.closest('button'),j=J();if(!b)return;
+ if(b.id==='am'){j.meta.push({id:uid(),k:'',v:''});save();renderMeta();focusLast('[data-mk]')}
+ else if(b.dataset.wh){const m=j.meta.find(m=>m.id===b.dataset.wh);m.h=!m.h;save();renderMeta()}
+ else if(b.dataset.xm)arm(b,()=>{j.meta=j.meta.filter(m=>m.id!==b.dataset.xm);save();renderMeta()})});
+M.addEventListener('input',e=>{const i=e.target;if(i.dataset.mv){const m=J().meta.find(m=>m.id===i.dataset.mv);if(m){m.v=i.value;save()}}});
+M.addEventListener('focusout',e=>{const l=e.target;if(!l.dataset.mk)return;const m=J().meta.find(m=>m.id===l.dataset.mk),n=l.textContent.trim();if(m){m.k=n;save()}l.textContent=n});
+M.addEventListener('pointerdown',e=>{const g=e.target.closest('.gr');if(!g)return;e.preventDefault();
+ const el=g.closest('.m'),box=el.parentNode;el.classList.add('dg');
+ const mv=ev=>{const t=document.elementFromPoint(ev.clientX,ev.clientY),o=t&&t.closest('.m');if(!o||o===el||o.parentNode!==box)return;
+  const r=o.getBoundingClientRect(),before=(o.classList.contains('h')&&el.classList.contains('h'))?ev.clientX<r.left+r.width/2:ev.clientY<r.top+r.height/2;
+  box.insertBefore(el,before?o:o.nextSibling)};
+ const up=()=>{['pointermove','pointerup','pointercancel'].forEach((n,i)=>document.removeEventListener(n,i?up:mv));el.classList.remove('dg');
+  const ids=[...box.children].map(c=>c.dataset.id),j=J();j.meta.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id));save()};
+ document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up)});
+M.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.mk){e.preventDefault();e.target.blur()}});
+$('#sel').onchange=e=>{S.cur=e.target.value;save();render()};
+$('#nm').oninput=e=>{J().name=e.target.value||'Untitled';save();const o=$('#sel').selectedOptions[0];if(o)o.textContent=J().name};
+$('#new').onclick=()=>{const j=mk('Job '+(S.jobs.length+1));S.jobs.push(j);S.cur=j.id;save();render();$('#nm').select()};
+$('#ed').onclick=e=>{document.body.classList.toggle('ed');e.target.classList.toggle('on')};
+$('#clr').onclick=e=>arm(e.target,()=>{J().v={};save();render()});
+$('#del').onclick=e=>arm(e.target,()=>{S.jobs=S.jobs.filter(j=>j.id!==S.cur);if(!S.jobs.length)S.jobs.push(mk('Job 1'));S.cur=S.jobs[0].id;save();render()});
+$('#prt').onclick=()=>window.print();
+const DG=$('#dlg'),TA=$('#ta'),say=t=>$('#msg').textContent=t;
+$('#dat').onclick=()=>{TA.value=JSON.stringify(J());DG.showModal?DG.showModal():DG.setAttribute('open','')};
+$('#cj').onclick=()=>{TA.value=JSON.stringify(J());say('Job JSON ready to copy.')};
+$('#cc').onclick=()=>{const j=J(),q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+ const L=[['',...j.cols.map(c=>q(c.n)),'Total'].join(',')];
+ for(const r of j.rows){const vs=j.cols.map(c=>get(j,r.id,c.id));L.push([q(r.n),...vs,vs.reduce((a,b)=>a+b,0)].join(','))}
+ const ct=j.cols.map(c=>j.rows.reduce((a,r)=>a+get(j,r.id,c.id),0));L.push(['Total',...ct,ct.reduce((a,b)=>a+b,0)].join(','));
+ TA.value=L.join('\n');say('CSV ready. Copy it into a spreadsheet.')};
+$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(TA.value);say('Copied.')}catch(e){TA.select();document.execCommand('copy');say('Copied.')}};
+$('#im').onclick=()=>{try{const j=JSON.parse(TA.value);if(!Array.isArray(j.rows)||!Array.isArray(j.cols))throw 0;
+ j.id=uid();j.meta=Array.isArray(j.meta)?j.meta:[];j.name=String(j.name||'Imported');j.v=j.v||{};S.jobs.push(j);S.cur=j.id;save();render();DG.close()}catch(e){say('That is not valid job JSON.')}};
+$('#cl').onclick=()=>DG.close();
+const dk=()=>matchMedia('(prefers-color-scheme:dark)').matches;
+function theme(t){const r=document.documentElement,b=$('#th');if(t)r.dataset.theme=t;const d=r.dataset.theme?r.dataset.theme==='dark':dk();
+ b.textContent=d?'☀':'☾';b.title=d?'Switch to light mode':'Switch to dark mode';document.querySelector('meta[name=theme-color]').content=d?'#0e141b':'#0f766e'}
+$('#th').onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==='dark':dk();S.theme=d?'light':'dark';save();theme(S.theme)};
+try{const mq=matchMedia('(prefers-color-scheme:dark)');mq.addEventListener?mq.addEventListener('change',()=>theme()):mq.addListener(()=>theme())}catch(e){}
+theme(S.theme);
+render();
+</script>
+</body>
+</html>
