@@ -85,12 +85,15 @@ main{padding-top:10px}
 select.b{max-width:100%;width:100%}
 .b{min-height:44px}
 #th{width:44px}
-th,td{padding:8px 5px}
-th:first-child{min-width:80px;max-width:120px;white-space:normal;overflow-wrap:anywhere}
-th:first-child .lbl{max-width:110px}
-.c{gap:4px}
-.c button{width:44px;height:44px;font-size:1.3rem;flex-shrink:0}
-.c input{width:44px;min-height:44px;font-size:16px}
+table{table-layout:fixed;width:max(100%,calc(108px + var(--data-columns,1)*92px))}
+th,td{padding:8px 4px;white-space:normal;overflow-wrap:anywhere}
+th:first-child{width:64px;min-width:64px;max-width:64px}
+th:last-child{width:44px}
+.lbl{min-width:0;max-width:100%;padding:3px 2px}
+th:first-child .lbl{max-width:54px}
+.c{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;width:100%;max-width:96px;margin:auto}
+.c button{width:100%;height:44px;font-size:1.3rem;min-width:0}
+.c input{grid-column:1/-1;grid-row:1;width:100%;min-width:0;min-height:36px;font-size:16px}
 .lbl{font-size:16px}
 .cr{height:96px}
 .cr .add{width:44px;height:44px}
@@ -120,7 +123,7 @@ th:first-child .lbl{max-width:110px}
 <input id="nm" aria-label="Job title" placeholder="Job title">
 <div id="meta"></div>
 <div class="wrap" role="region" aria-label="Job counts table; scroll horizontally to see all columns" tabindex="0"><table id="tb"></table></div>
-<p class="note mobile-note">Swipe the table sideways to see more columns.</p>
+<p class="note mobile-note">Up to two count columns and Total fit on screen. Swipe sideways for more columns.</p>
 <div class="bar tl">
  <button class="b" id="ed">Edit</button>
  <button class="b" id="clr">Clear counts</button>
@@ -165,6 +168,7 @@ function render(){
   h+=`<td class="t" data-l="Total">${rt}</td></tr>`}
  h+='</tbody>'
   +`<tfoot><tr><th>Total</th>${ct.map((t,i)=>`<td class="t" data-l="${esc(j.cols[i].n)}" data-cid="${j.cols[i].id}">${t}</td>`).join('')}<td class="t" data-l="Grand total">${ct.reduce((a,b)=>a+b,0)}</td></tr></tfoot>`;
+ $('#tb').style.setProperty('--data-columns',j.cols.length);
  $('#tb').innerHTML=h;
 }
 function focusLast(sel){const e=[...document.querySelectorAll(sel)].pop();if(e){e.focus();const r=document.createRange();r.selectNodeContents(e);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
